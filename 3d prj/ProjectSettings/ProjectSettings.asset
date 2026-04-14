@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 6156fb1a2cb6dee48bdd6c0b6fec59d9
+  productGUID: ec5a80140fcddeb45bcd7cc198f9c5de
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -253,8 +253,8 @@ PlayerSettings:
   iOSAutomaticallyDetectAndAddCapabilities: 1
   appleEnableProMotion: 0
   shaderPrecisionModel: 0
-  clonedFromGUID: 3c72c65a16f0acb438eed22b8b16c24a
-  templatePackageId: com.unity.template.urp-blank@17.0.11
+  clonedFromGUID: a5989f2d386575383a3139e9e04b5d45
+  templatePackageId: 
   templateDefaultScene: Assets/Scenes/SampleScene.unity
   useCustomMainManifest: 0
   useCustomLauncherManifest: 0
@@ -923,7 +923,7 @@ PlayerSettings:
   cloudProjectId: 78084c67-334b-4cfd-b3c5-5fa52e3edc8e
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: 3d prj
+  projectName: 
   organizationId: np02cs4a250084
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
