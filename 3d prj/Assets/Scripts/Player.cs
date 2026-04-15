@@ -1,11 +1,30 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
-
     public Card heldCard;
     public Transform holdPoint;
 
+    public Text cardUIText;
+
+    Card nearbyCard;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && nearbyCard != null)
+        {
+            PickCard(nearbyCard);
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            InspectCard();
+        }
+
+    
+    
+    }
 
     void InspectCard()
     {
@@ -14,50 +33,42 @@ public class Player : MonoBehaviour
         Debug.Log("CARD INFO: " + heldCard.cardText);
     }
 
-
-void OnTriggerEnter(Collider other)
-{
-    if (other.CompareTag("Card"))
+    void OnTriggerEnter(Collider other)
     {
-        Card card = other.GetComponent<Card>();
-
-        if (card != null)
+        if (other.CompareTag("Card"))
         {
-            PickCard(card);
+            nearbyCard = other.GetComponent<Card>();
         }
     }
-}
 
-void PickCard(Card card)
-{
-    heldCard = card;
-
-    card.transform.SetParent(holdPoint);
-    card.transform.localPosition = Vector3.zero;
-    card.transform.localRotation = Quaternion.identity;
-
-    // disable physics after pickup
-    Rigidbody rb = card.GetComponent<Rigidbody>();
-    if (rb != null)
+    void OnTriggerExit(Collider other)
     {
-        rb.isKinematic = true;
-        rb.useGravity = false;
-    }
-}
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F))
+        if (other.CompareTag("Card"))
         {
-            InspectCard();
-            
+            nearbyCard = null;
+        }
+    }
+
+    void PickCard(Card card)
+    {
+        if (heldCard != null) return;
+
+        heldCard = card;
+
+        card.transform.SetParent(holdPoint);
+        card.transform.localPosition = new Vector3(0.1f, -0.1f, 0.2f);
+        card.transform.localRotation = Quaternion.Euler(0, 180, 0);
+
+        Rigidbody rb = card.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
+
+        if (cardUIText != null)
+        {
+            cardUIText.text = card.cardText;
         }
     }
 }
