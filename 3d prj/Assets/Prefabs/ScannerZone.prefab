@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4548223852367266270}
   - component: {fileID: 1052056468651057329}
+  - component: {fileID: 4497119217999746334}
   m_Layer: 0
   m_Name: ScannerZone
   m_TagString: Untagged
@@ -53,3 +54,16 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4497119217999746334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2672192889488163187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9434f57eaca9f2947a64987e81eb3296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gate: {fileID: 0}
