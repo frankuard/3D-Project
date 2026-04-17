@@ -2,30 +2,16 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-
-      public CardType cardType;
+    public CardType cardType;
 
     [TextArea]
-    public string cardText; 
-      public enum CardType
-{
-    StudentID,
-    CEPCard,
-    StaffCard,
-    Unknown
-}
+    public string cardText;
 
-
-     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public enum CardType
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        StudentID,
+        CEPCard,
+        StaffCard,
+        Unknown
     }
 }
