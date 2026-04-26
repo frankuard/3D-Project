@@ -1,0 +1,32 @@
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+
+# Keep meta files
+!*.meta
+
+
+3d prj/Assets/LeartesStudios/CoffeeShopInterior/URP/CoffeeShopURP.unitypackage
+
+3d prj/Assets/LeartesStudios/CoffeeShopInterior/Built-In/CoffeeShopBuiltIn.unitypackage is 132.23 MB; this exceeds GitHub's file size limit of 100.00 MB
+
+
