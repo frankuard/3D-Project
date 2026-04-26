@@ -121,6 +121,27 @@
       },
       "url": "https://packages.unity.com"
     },
+<<<<<<< HEAD
+    "com.unity.postprocessing": {
+      "version": "3.5.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.progrids": {
+      "version": "3.0.3-preview.6",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.settings-manager": "1.0.2"
+      },
+      "url": "https://packages.unity.com"
+    },
+=======
+>>>>>>> 36b7688c3a6eb743640e03f17a8d825eed957fc2
     "com.unity.render-pipelines.core": {
       "version": "17.0.4",
       "depth": 0,
@@ -173,7 +194,11 @@
     },
     "com.unity.settings-manager": {
       "version": "2.1.0",
+<<<<<<< HEAD
+      "depth": 1,
+=======
       "depth": 2,
+>>>>>>> 36b7688c3a6eb743640e03f17a8d825eed957fc2
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
