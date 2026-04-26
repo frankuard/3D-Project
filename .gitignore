@@ -22,4 +22,15 @@ Thumbs.db
 .idea/
 
 # Keep meta files
+<<<<<<< HEAD
 !*.meta
+
+
+3d prj/Assets/LeartesStudios/CoffeeShopInterior/URP/CoffeeShopURP.unitypackage
+
+3d prj/Assets/LeartesStudios/CoffeeShopInterior/Built-In/CoffeeShopBuiltIn.unitypackage is 132.23 MB; this exceeds GitHub's file size limit of 100.00 MB
+
+
+=======
+!*.meta
+>>>>>>> 36b7688c3a6eb743640e03f17a8d825eed957fc2
