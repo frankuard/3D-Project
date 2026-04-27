@@ -4,26 +4,50 @@ public class ScannerZone : MonoBehaviour
 {
     public GateController gate;
 
+    private Player nearbyPlayer;
+
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Scanner hit by: " + other.name);
-
-        // ALWAYS get Player from parent chain
         Player player = other.GetComponentInParent<Player>();
 
-        if (player == null)
+        if (player != null)
         {
-            Debug.Log("No Player found in hierarchy");
-            return;
+            nearbyPlayer = player;
+            Debug.Log("Player entered scanner zone");
         }
+    }
 
-        if (player.heldCard == null)
+    void OnTriggerExit(Collider other)
+    {
+        Player player = other.GetComponentInParent<Player>();
+
+        if (player != null)
+        {
+            nearbyPlayer = null;
+            Debug.Log("Player left scanner zone");
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            if (nearbyPlayer != null)
+            {
+                ScanCard();
+            }
+        }
+    }
+
+    void ScanCard()
+    {
+        if (nearbyPlayer.heldCard == null)
         {
             gate.DenyAccess("NO CARD");
             return;
         }
 
-        Card.CardType type = player.heldCard.cardType;
+        Card.CardType type = nearbyPlayer.heldCard.cardType;
 
         if (type == Card.CardType.StudentID ||
             type == Card.CardType.StaffCard)

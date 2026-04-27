@@ -1,15 +1,17 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class GateController : MonoBehaviour
 {
     public GameObject door;
     public GameObject popup;
-    public Text popupText;
+    public TextMeshProUGUI popupText;
 
     public void GrantAccess()
     {
-        door.SetActive(false);
+        door.GetComponent<MeshRenderer>().enabled = false;
+        door.GetComponent<Collider>().enabled = false;
+
         ShowPopup("ACCESS GRANTED");
     }
 
