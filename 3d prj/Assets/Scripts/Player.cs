@@ -6,9 +6,11 @@ public class Player : MonoBehaviour
     public Card heldCard;
     public Transform holdPoint;
 
-    public Text cardUIText;
+    public GameObject cardInfoPanel;
+    public Image cardImageUI;
 
     Card nearbyCard;
+    bool uiVisible = false;
 
     void Update()
     {
@@ -19,18 +21,21 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            InspectCard();
+            ToggleCardUI();
         }
-
-    
-    
     }
 
-    void InspectCard()
+    void ToggleCardUI()
     {
         if (heldCard == null) return;
 
-        Debug.Log("CARD INFO: " + heldCard.cardText);
+        uiVisible = !uiVisible;
+        cardInfoPanel.SetActive(uiVisible);
+
+        if (uiVisible)
+        {
+            cardImageUI.sprite = heldCard.cardSprite;
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -56,19 +61,14 @@ public class Player : MonoBehaviour
         heldCard = card;
 
         card.transform.SetParent(holdPoint);
-        card.transform.localPosition = new Vector3(0.1f, -0.1f, 0.2f);
-        card.transform.localRotation = Quaternion.Euler(0, 180, 0);
+        card.transform.localPosition = Vector3.zero;
+        card.transform.localRotation = Quaternion.identity;
 
         Rigidbody rb = card.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.isKinematic = true;
             rb.useGravity = false;
-        }
-
-        if (cardUIText != null)
-        {
-            cardUIText.text = card.cardText;
         }
     }
 }
