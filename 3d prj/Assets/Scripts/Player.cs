@@ -1,166 +1,161 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// ─────────────────────────────────────────────
-//  Player.cs
-//  Attach to the Player GameObject.
-//  Requires a Collider set as Trigger on the player (pickup detection radius).
-// ─────────────────────────────────────────────
 public class Player : MonoBehaviour
 {
-    // ── Inspector Fields ──────────────────────
     [Header("Hold Point")]
-    [Tooltip("Empty child Transform where the card will sit in the player's hand.")]
     public Transform holdPoint;
 
     [Header("Card Inspection UI")]
-    public GameObject cardInfoPanel;   // The full-screen / overlay panel
-    public Image      cardImageUI;     // UI Image inside the panel
+    public GameObject  cardInfoPanel;
+    public Image        cardImageUI;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI deptText;
+    public TextMeshProUGUI idText;
+    public TextMeshProUGUI cardTypeText;
 
     [Header("Pickup Prompt UI")]
-    [Tooltip("WorldSpace or ScreenSpace panel showing 'Press E to Pick Up'.")]
-    public GameObject pickupPrompt;
+    public GameObject      pickupPrompt;
+    public TextMeshProUGUI pickupPromptText;
 
     [Header("Drop Settings")]
-    [Tooltip("Force applied when dropping the card so it doesn't clip the player.")]
     public float dropForce = 2f;
 
-    // ── Runtime State ─────────────────────────
+    [Header("Fade Settings")]
+    public float fadeDuration = 0.25f;
+
     [HideInInspector] public Card heldCard;
 
     private Card _nearbyCard;
     private bool _uiVisible;
+    private CanvasGroup _panelCG;
+    private Coroutine _fadeRoutine;
 
-    // ─────────────────────────────────────────
-    //  Unity Callbacks
-    // ─────────────────────────────────────────
     void Start()
     {
-        // Make sure UI elements are hidden at startup
+        _panelCG = cardInfoPanel.GetComponent<CanvasGroup>();
+        if (_panelCG == null)
+            _panelCG = cardInfoPanel.AddComponent<CanvasGroup>();
+
         cardInfoPanel.SetActive(false);
         pickupPrompt.SetActive(false);
+
+        if (pickupPromptText != null)
+            pickupPromptText.text = "Press E to Pick Up";
     }
 
     void Update()
     {
-        HandlePickup();
-        HandleInspect();
-        HandleDrop();
-    }
-
-    // ─────────────────────────────────────────
-    //  Input Handlers
-    // ─────────────────────────────────────────
-
-    /// <summary>E key – pick up the nearby card (if hands are empty).</summary>
-    void HandlePickup()
-    {
         if (Input.GetKeyDown(KeyCode.E) && _nearbyCard != null && heldCard == null)
-        {
             PickCard(_nearbyCard);
-        }
-    }
 
-    /// <summary>F key – toggle card image inspection panel.</summary>
-    void HandleInspect()
-    {
         if (Input.GetKeyDown(KeyCode.F))
-        {
             ToggleCardUI();
-        }
-    }
 
-    /// <summary>G key – drop / throw away the currently held card.</summary>
-    void HandleDrop()
-    {
         if (Input.GetKeyDown(KeyCode.G) && heldCard != null)
-        {
             DropCard();
-        }
     }
 
-    // ─────────────────────────────────────────
-    //  Card Logic
-    // ─────────────────────────────────────────
+    // ── PICK / DROP ───────────────────────────
 
     void PickCard(Card card)
     {
-        // Detach from any previous parent & re-parent to holdPoint
+        heldCard = card;
+        _nearbyCard = null;
+
         card.transform.SetParent(holdPoint);
         card.transform.localPosition = Vector3.zero;
         card.transform.localRotation = Quaternion.identity;
 
-        // Disable physics while held
         Rigidbody rb = card.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.isKinematic  = true;
-            rb.useGravity   = false;
+            rb.isKinematic = true;
+            rb.useGravity = false;
         }
 
-        // Turn off highlight once picked up
-        card.SetHighlight(false);
-
-        heldCard    = card;
-        _nearbyCard = null;
-
-        // Hide prompt since the card is no longer nearby & loose
         pickupPrompt.SetActive(false);
     }
 
     void DropCard()
     {
         if (heldCard == null) return;
-
-        // Close inspect panel if open
         if (_uiVisible) CloseCardUI();
 
         Card card = heldCard;
         heldCard = null;
 
-        // Detach from player
         card.transform.SetParent(null);
 
-        // Re-enable physics
         Rigidbody rb = card.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.isKinematic = false;
-            rb.useGravity  = true;
-            // Toss gently forward
+            rb.useGravity = true;
             rb.AddForce(transform.forward * dropForce, ForceMode.Impulse);
         }
     }
+
+    // ── UI SYSTEM ─────────────────────────────
 
     void ToggleCardUI()
     {
         if (heldCard == null) return;
 
-        _uiVisible = !_uiVisible;
-
-        if (_uiVisible)
-            OpenCardUI();
-        else
-            CloseCardUI();
+        if (_uiVisible) CloseCardUI();
+        else OpenCardUI();
     }
 
     void OpenCardUI()
     {
-        cardImageUI.sprite = heldCard.cardSprite;
+        if (heldCard == null) return;
+
+        cardImageUI.sprite = heldCard.cardImage;
+
+        if (nameText != null) nameText.text = heldCard.cardHolderName;
+        if (deptText != null) deptText.text = heldCard.department;
+        if (idText != null) idText.text = heldCard.cardID;
+        if (cardTypeText != null) cardTypeText.text = heldCard.cardType;
+
         cardInfoPanel.SetActive(true);
         _uiVisible = true;
+
+        if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
+        _fadeRoutine = StartCoroutine(FadeCanvasGroup(_panelCG, 0f, 1f));
     }
 
     void CloseCardUI()
     {
-        cardInfoPanel.SetActive(false);
         _uiVisible = false;
+
+        if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
+        _fadeRoutine = StartCoroutine(FadeAndHide());
     }
 
-    // ─────────────────────────────────────────
-    //  Trigger Detection (Card Proximity)
-    // ─────────────────────────────────────────
+    IEnumerator FadeCanvasGroup(CanvasGroup cg, float from, float to)
+    {
+        float t = 0f;
+        cg.alpha = from;
+
+        while (t < fadeDuration)
+        {
+            t += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(from, to, t / fadeDuration);
+            yield return null;
+        }
+
+        cg.alpha = to;
+    }
+
+    IEnumerator FadeAndHide()
+    {
+        yield return StartCoroutine(FadeCanvasGroup(_panelCG, 1f, 0f));
+        cardInfoPanel.SetActive(false);
+    }
+
+    // ── DETECTION ─────────────────────────────
 
     void OnTriggerEnter(Collider other)
     {
@@ -170,10 +165,7 @@ public class Player : MonoBehaviour
         if (card == null || card == heldCard) return;
 
         _nearbyCard = card;
-        _nearbyCard.SetHighlight(true);
-
-        if (heldCard == null)
-            pickupPrompt.SetActive(true);
+        pickupPrompt.SetActive(true);
     }
 
     void OnTriggerExit(Collider other)
@@ -183,9 +175,7 @@ public class Player : MonoBehaviour
         Card card = other.GetComponent<Card>();
         if (card == null || card != _nearbyCard) return;
 
-        _nearbyCard.SetHighlight(false);
         _nearbyCard = null;
-
         pickupPrompt.SetActive(false);
     }
 }

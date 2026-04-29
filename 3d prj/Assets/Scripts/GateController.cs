@@ -1,92 +1,93 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
-// ─────────────────────────────────────────────
-//  GateController.cs
-//  Attach to the Gate GameObject (or a manager empty).
-// ─────────────────────────────────────────────
 public class GateController : MonoBehaviour
 {
-    // ── Inspector Fields ──────────────────────
     [Header("Gate")]
-    [Tooltip("The cube / mesh that acts as the door barrier.")]
     public GameObject door;
 
     [Header("Popup UI")]
-    public GameObject        popup;
-    public TextMeshProUGUI   popupText;
-
-    [Tooltip("Color applied to popup text on access granted.")]
-    public Color grantedColor = new Color(0.2f, 0.9f, 0.3f);  // green
-    [Tooltip("Color applied to popup text on denial.")]
-    public Color deniedColor  = new Color(0.95f, 0.2f, 0.2f); // red
+    public GameObject      popup;
+    public TextMeshProUGUI popupText;
+    public Image           popupBackground;
 
     [Header("Timing")]
-    public float popupDuration = 1.5f;
+    public float popupDuration = 2f;
+    public float fadeDuration  = 0.35f;
 
-    // ── Runtime State ─────────────────────────
-    private bool _gateOpen;
-    private Coroutine _hideRoutine;
+    private bool        _gateOpen;
+    private Coroutine   _popupRoutine;
+    private CanvasGroup _popupCG;
 
-    // ─────────────────────────────────────────
-    //  Public API (called by ScannerZone)
-    // ─────────────────────────────────────────
+    // Colors
+    private readonly Color _grantedBg   = new Color(0.04f, 0.29f, 0.13f, 0.92f);
+    private readonly Color _grantedText = new Color(0.42f, 0.05f, 0.55f, 1f);  // adjust as you like
+    private readonly Color _deniedBg    = new Color(0.29f, 0.04f, 0.04f, 0.92f);
+    private readonly Color _deniedText  = new Color(1f,    0.35f, 0.35f, 1f);
 
+    void Start()
+    {
+        _popupCG = popup.GetComponent<CanvasGroup>();
+        if (_popupCG == null) _popupCG = popup.AddComponent<CanvasGroup>();
+        popup.SetActive(false);
+    }
+
+    // Called by ScannerZone when player scans
     public void GrantAccess()
     {
-        if (_gateOpen) return; // already open, no duplicate messages
-
+        if (_gateOpen) return;
         OpenGate();
-        ShowPopup("ACCESS GRANTED", grantedColor);
+        ShowPopup("✦ ACCESS GRANTED ✦", _grantedText, _grantedBg);
     }
 
     public void DenyAccess(string reason)
     {
-        ShowPopup(reason, deniedColor);
+        ShowPopup("✦ " + reason + " ✦", _deniedText, _deniedBg);
     }
-
-    // ─────────────────────────────────────────
-    //  Gate
-    // ─────────────────────────────────────────
 
     void OpenGate()
     {
         _gateOpen = true;
-
         if (door == null) return;
-
-        // Hide visually
-        MeshRenderer mr = door.GetComponent<MeshRenderer>();
-        if (mr != null) mr.enabled = false;
-
-        // Disable collision so player can walk through
-        Collider col = door.GetComponent<Collider>();
+        var mr  = door.GetComponent<MeshRenderer>();
+        var col = door.GetComponent<Collider>();
+        if (mr  != null) mr.enabled  = false;
         if (col != null) col.enabled = false;
     }
 
-    // ─────────────────────────────────────────
-    //  Popup
-    // ─────────────────────────────────────────
-
-    void ShowPopup(string message, Color color)
+    void ShowPopup(string message, Color textColor, Color bgColor)
     {
         if (popup == null || popupText == null) return;
 
         popupText.text  = message;
-        popupText.color = color;
-        popup.SetActive(true);
+        popupText.color = textColor;
+        if (popupBackground != null) popupBackground.color = bgColor;
 
-        // Cancel any previous hide timer
-        if (_hideRoutine != null)
-            StopCoroutine(_hideRoutine);
-
-        _hideRoutine = StartCoroutine(HideAfterDelay(popupDuration));
+        if (_popupRoutine != null) StopCoroutine(_popupRoutine);
+        _popupRoutine = StartCoroutine(PopupSequence());
     }
 
-    IEnumerator HideAfterDelay(float delay)
+    IEnumerator PopupSequence()
     {
-        yield return new WaitForSeconds(delay);
+        popup.SetActive(true);
+        yield return StartCoroutine(FadeCG(_popupCG, 0f, 1f));
+        yield return new WaitForSeconds(popupDuration);
+        yield return StartCoroutine(FadeCG(_popupCG, 1f, 0f));
         popup.SetActive(false);
+    }
+
+    IEnumerator FadeCG(CanvasGroup cg, float from, float to)
+    {
+        float t = 0f;
+        cg.alpha = from;
+        while (t < fadeDuration)
+        {
+            t += Time.deltaTime;
+            cg.alpha = Mathf.Lerp(from, to, t / fadeDuration);
+            yield return null;
+        }
+        cg.alpha = to;
     }
 }
