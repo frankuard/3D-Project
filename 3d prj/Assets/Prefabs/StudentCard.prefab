@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8027948745176744068}
   - component: {fileID: 6179447712547270490}
   - component: {fileID: 8156655012283983238}
-  - component: {fileID: 5293259323360954628}
+  - component: {fileID: 1304343056646191161}
   m_Layer: 0
   m_Name: StudentCard
   m_TagString: Card
@@ -109,7 +109,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5293259323360954628
+--- !u!114 &1304343056646191161
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,4 +122,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardType: 0
-  cardText: '"Student: Test User"'
+  cardSprite: {fileID: 0}
+  personName: 
+  department: 
+  idNumber: 
+  cardRenderers: []
+  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightEmissionIntensity: 1.2
