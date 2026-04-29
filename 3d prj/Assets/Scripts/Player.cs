@@ -28,14 +28,13 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public Card heldCard;
 
-    private Card       _nearbyCard;
-    private bool       _uiVisible;
+    private Card _nearbyCard;
+    private bool _uiVisible;
     private CanvasGroup _panelCG;
-    private Coroutine  _fadeRoutine;
+    private Coroutine _fadeRoutine;
 
     void Start()
     {
-        // Get or add CanvasGroup for fade
         _panelCG = cardInfoPanel.GetComponent<CanvasGroup>();
         if (_panelCG == null)
             _panelCG = cardInfoPanel.AddComponent<CanvasGroup>();
@@ -44,7 +43,7 @@ public class Player : MonoBehaviour
         pickupPrompt.SetActive(false);
 
         if (pickupPromptText != null)
-            pickupPromptText.text = "Press  E  to Pick Up";
+            pickupPromptText.text = "Press E to Pick Up";
     }
 
     void Update()
@@ -59,20 +58,24 @@ public class Player : MonoBehaviour
             DropCard();
     }
 
-    // ── Card Logic ────────────────────────────
+    // ── PICK / DROP ───────────────────────────
 
     void PickCard(Card card)
     {
+        heldCard = card;
+        _nearbyCard = null;
+
         card.transform.SetParent(holdPoint);
         card.transform.localPosition = Vector3.zero;
         card.transform.localRotation = Quaternion.identity;
 
         Rigidbody rb = card.GetComponent<Rigidbody>();
-        if (rb != null) { rb.isKinematic = true; rb.useGravity = false; }
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
 
-        card.SetHighlight(false);
-        heldCard    = card;
-        _nearbyCard = null;
         pickupPrompt.SetActive(false);
     }
 
@@ -83,33 +86,38 @@ public class Player : MonoBehaviour
 
         Card card = heldCard;
         heldCard = null;
+
         card.transform.SetParent(null);
 
         Rigidbody rb = card.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.isKinematic = false;
-            rb.useGravity  = true;
+            rb.useGravity = true;
             rb.AddForce(transform.forward * dropForce, ForceMode.Impulse);
         }
     }
 
-    // ── Card UI ───────────────────────────────
+    // ── UI SYSTEM ─────────────────────────────
 
     void ToggleCardUI()
     {
         if (heldCard == null) return;
-        if (_uiVisible) CloseCardUI(); else OpenCardUI();
+
+        if (_uiVisible) CloseCardUI();
+        else OpenCardUI();
     }
 
     void OpenCardUI()
     {
-        cardImageUI.sprite = heldCard.cardSprite;
+        if (heldCard == null) return;
 
-        if (nameText     != null) nameText.text     = heldCard.personName;
-        if (deptText     != null) deptText.text     = heldCard.department;
-        if (idText       != null) idText.text       = heldCard.idNumber;
-        if (cardTypeText != null) cardTypeText.text = heldCard.cardType.ToString();
+        cardImageUI.sprite = heldCard.cardImage;
+
+        if (nameText != null) nameText.text = heldCard.cardHolderName;
+        if (deptText != null) deptText.text = heldCard.department;
+        if (idText != null) idText.text = heldCard.cardID;
+        if (cardTypeText != null) cardTypeText.text = heldCard.cardType;
 
         cardInfoPanel.SetActive(true);
         _uiVisible = true;
@@ -121,6 +129,7 @@ public class Player : MonoBehaviour
     void CloseCardUI()
     {
         _uiVisible = false;
+
         if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
         _fadeRoutine = StartCoroutine(FadeAndHide());
     }
@@ -129,12 +138,14 @@ public class Player : MonoBehaviour
     {
         float t = 0f;
         cg.alpha = from;
+
         while (t < fadeDuration)
         {
             t += Time.deltaTime;
             cg.alpha = Mathf.Lerp(from, to, t / fadeDuration);
             yield return null;
         }
+
         cg.alpha = to;
     }
 
@@ -144,24 +155,26 @@ public class Player : MonoBehaviour
         cardInfoPanel.SetActive(false);
     }
 
-    // ── Proximity Detection ───────────────────
+    // ── DETECTION ─────────────────────────────
 
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Card")) return;
+
         Card card = other.GetComponent<Card>();
         if (card == null || card == heldCard) return;
+
         _nearbyCard = card;
-        _nearbyCard.SetHighlight(true);
-        if (heldCard == null) pickupPrompt.SetActive(true);
+        pickupPrompt.SetActive(true);
     }
 
     void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Card")) return;
+
         Card card = other.GetComponent<Card>();
         if (card == null || card != _nearbyCard) return;
-        _nearbyCard.SetHighlight(false);
+
         _nearbyCard = null;
         pickupPrompt.SetActive(false);
     }
