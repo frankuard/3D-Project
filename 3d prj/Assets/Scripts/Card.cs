@@ -29,6 +29,12 @@ public class Card : MonoBehaviour
     private Collider    _col;
     private CanvasGroup _panelCG;
 
+
+public bool IsHeld()
+{
+    return _isHeld;
+}
+
     void Start()
     {
         _rb  = GetComponent<Rigidbody>();
