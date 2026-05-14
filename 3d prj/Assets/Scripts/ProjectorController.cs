@@ -127,8 +127,7 @@ public class ProjectorController : MonoBehaviour
         _playerNear = false;
         if (promptPanel != null) promptPanel.SetActive(false);
 
-        // Auto-turn off when player walks away
-        if (_projectorOn) TurnOff();
+       
     }
 
     // ─────────────────────────────────────────────────────────
