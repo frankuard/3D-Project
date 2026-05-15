@@ -99,6 +99,7 @@ public class Player : MonoBehaviour
     // ─────────────────────────────────────────
     void DropCard()
     {
+            Debug.Log("DROP CALLED");
         if (heldCard == null) return;
         if (_uiVisible) CloseCardUI();
 
@@ -109,10 +110,11 @@ public class Player : MonoBehaviour
         card.transform.SetParent(null);
 
         Rigidbody rb = card.GetComponent<Rigidbody>();
-        if (rb != null) { rb.isKinematic = false; rb.useGravity = true; rb.AddForce(transform.forward * dropForce, ForceMode.Impulse); }
+        if (rb != null) { rb.isKinematic = false; rb.useGravity = true; rb.AddForce(Vector3.down * 1f, ForceMode.Impulse); }
 
         Collider col = card.GetComponent<Collider>();
         if (col != null) col.enabled = true;
+
     }
 
     // ─────────────────────────────────────────
