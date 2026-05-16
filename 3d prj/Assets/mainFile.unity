@@ -18829,7 +18829,7 @@ PrefabInstance:
     - target: {fileID: 6179447712547270490, guid: 57b69f81fe3282f4282951971da152fa, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 52f5ee75139674140bd8ce32d966485c, type: 2}
+      objectReference: {fileID: 2100000, guid: 649c72d6d8cf90c4cb566720c5129ea2, type: 2}
     - target: {fileID: 8156655012283983238, guid: 57b69f81fe3282f4282951971da152fa, type: 3}
       propertyPath: m_IsTrigger
       value: 0
@@ -18895,7 +18895,7 @@ MonoBehaviour:
   department: BCS
   cardID: Student
   cardType: Student
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 7c5c31f81f9b75b4eb67d58af1eaa9ee, type: 3}
   isHeld: 0
 --- !u!54 &403002970
 Rigidbody:
@@ -23873,6 +23873,14 @@ PrefabInstance:
     - target: {fileID: 4416926081852918481, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: m_Name
       value: PlayerArmature
+      objectReference: {fileID: 0}
+    - target: {fileID: 4416926081852918490, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: MoveSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4416926081852918490, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+      propertyPath: FootstepAudioVolume
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5231395959756616898, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
       propertyPath: idText
