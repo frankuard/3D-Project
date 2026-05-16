@@ -5,7 +5,7 @@ using TMPro;
 
 // ─────────────────────────────────────────────
 //  ChairSit.cs — Fixed version
-//  1. Press F near chair → player sinks into chair
+//  1. Press H near chair → player sinks into chair
 //  2. Screen fades to black slowly
 //  3. Time jumps to 10 AM
 //  4. Screen fades back in slowly
@@ -54,16 +54,16 @@ public class ChairSit : MonoBehaviour
         }
 
         if (seatPromptText != null)
-            seatPromptText.text = "Press  F  to Sit";
+            seatPromptText.text = "Press  H  to Sit";
     }
 
     // ─────────────────────────────────────────
     void Update()
     {
-        if (_playerNear && !_isSitting && Input.GetKeyDown(KeyCode.F))
+        if (_playerNear && !_isSitting && Input.GetKeyDown(KeyCode.H))
             StartCoroutine(SitRoutine());
 
-        if (_isSitting && Input.GetKeyDown(KeyCode.F))
+        if (_isSitting && Input.GetKeyDown(KeyCode.H))
             StandUp();
     }
 
@@ -120,7 +120,7 @@ public class ChairSit : MonoBehaviour
 
         // Show stand up prompt
         if (seatPrompt     != null) seatPrompt.SetActive(true);
-        if (seatPromptText != null) seatPromptText.text = "Press  F  to Stand Up";
+        if (seatPromptText != null) seatPromptText.text = "Press  H  to Stand Up";
     }
 
     // ─────────────────────────────────────────
@@ -133,7 +133,7 @@ public class ChairSit : MonoBehaviour
             _player.transform.position = sitPoint.position + new Vector3(0, 0.5f, 1f);
 
         if (seatPrompt     != null) seatPrompt.SetActive(false);
-        if (seatPromptText != null) seatPromptText.text = "Press  F  to Sit";
+        if (seatPromptText != null) seatPromptText.text = "Press  H  to Sit";
     }
 
     // ─────────────────────────────────────────
