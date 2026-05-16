@@ -2,37 +2,49 @@ using UnityEngine;
 
 public class ScannerZone : MonoBehaviour
 {
-    public GateController gate;
+    public GateController gateController;
+    public string[] allowedCardTypes = { "Staff", "Student", "Security" };
+
+    private bool _hasScanned = false;
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Scanner hit by: " + other.name);
+        if (!other.CompareTag("Player")) return;
+        if (_hasScanned) return;
 
-        // ALWAYS get Player from parent chain
-        Player player = other.GetComponentInParent<Player>();
+        Card heldCard = FindHeldCard();
 
-        if (player == null)
+        if (heldCard == null)
         {
-            Debug.Log("No Player found in hierarchy");
+            gateController.DenyAccess("NO CARD DETECTED");
             return;
         }
 
-        if (player.heldCard == null)
+        bool allowed = false;
+        foreach (string t in allowedCardTypes)
         {
-            gate.DenyAccess("NO CARD");
-            return;
+            if (heldCard.cardType.Trim().ToLower() == t.Trim().ToLower())
+                allowed = true;
         }
 
-        Card.CardType type = player.heldCard.cardType;
-
-        if (type == Card.CardType.StudentID ||
-            type == Card.CardType.StaffCard)
+        if (allowed)
         {
-            gate.GrantAccess();
+            _hasScanned = true;
+            gateController.GrantAccess();
         }
         else
         {
-            gate.DenyAccess("INVALID CARD");
+            gateController.DenyAccess("ACCESS LEVEL TOO LOW");
         }
+    }
+
+    Card FindHeldCard()
+    {
+        Card[] allCards = FindObjectsByType<Card>(FindObjectsSortMode.None);
+        foreach (Card c in allCards)
+        {
+            if (c.IsHeld()) return c;
+        }
+        return null;
     }
 }
